@@ -10,6 +10,8 @@ import io.github.sudharsan_selvaraj.wowxhr.exceptions.DriverNotSupportedExceptio
 import io.github.sudharsan_selvaraj.wowxhr.log.XHRLog;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -73,5 +75,9 @@ public class ClubService {
         wowXhr = new WowXHR(webDriver);
 
         return wowXhr.getMockDriver();
+    }
+
+    public Page<Club> getAll(Pageable pageable) {
+        return clubRepository.findAll(pageable);
     }
 }
