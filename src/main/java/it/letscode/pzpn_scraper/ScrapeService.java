@@ -1,4 +1,4 @@
-package it.letscode.pzpn_scraper.league;
+package it.letscode.pzpn_scraper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class LeagueService {
+public class ScrapeService {
      private WowXHR wowXhr;
 
     private List<XHRLog> xhrLogs = new ArrayList<>();
@@ -32,7 +32,7 @@ public class LeagueService {
 
     ObjectMapper objectMapper = new ObjectMapper();
 
-    public LeagueService(LeagueClubRowRepository leagueClubRowRepository, GameRepository gameRepository) {
+    public ScrapeService(LeagueClubRowRepository leagueClubRowRepository, GameRepository gameRepository) {
         this.leagueClubRowRepository = leagueClubRowRepository;
         this.gameRepository = gameRepository;
     }

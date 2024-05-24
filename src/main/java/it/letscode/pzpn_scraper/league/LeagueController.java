@@ -1,5 +1,6 @@
 package it.letscode.pzpn_scraper.league;
 
+import it.letscode.pzpn_scraper.ScrapeService;
 import it.letscode.pzpn_scraper.league.league_club_row.LeagueClubRow;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/clubs")
 public class LeagueController {
-    private final LeagueService leagueService;
+    private final ScrapeService leagueService;
 
     @GetMapping
     public Page<LeagueClubRow> getAll(Pageable pageable) {
