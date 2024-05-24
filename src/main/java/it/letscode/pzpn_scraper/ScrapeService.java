@@ -10,30 +10,29 @@ import io.github.sudharsan_selvaraj.wowxhr.exceptions.DriverNotSupportedExceptio
 import io.github.sudharsan_selvaraj.wowxhr.log.XHRLog;
 import it.letscode.pzpn_scraper.game.Game;
 import it.letscode.pzpn_scraper.game.GameRepository;
-import it.letscode.pzpn_scraper.league.league_club_row.LeagueClubRow;
-import it.letscode.pzpn_scraper.league.league_club_row.LeagueClubRowRepository;
+import it.letscode.pzpn_scraper.league.League;
+import it.letscode.pzpn_scraper.league.LeagueRepository;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ScrapeService {
      private WowXHR wowXhr;
 
-    private List<XHRLog> xhrLogs = new ArrayList<>();
+    private final List<XHRLog> xhrLogs = new ArrayList<>();
 
-     private final LeagueClubRowRepository leagueClubRowRepository;
+     private final LeagueRepository leagueRepository;
      private final GameRepository gameRepository;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
-    public ScrapeService(LeagueClubRowRepository leagueClubRowRepository, GameRepository gameRepository) {
-        this.leagueClubRowRepository = leagueClubRowRepository;
+    public ScrapeService(LeagueRepository leagueRepository, GameRepository gameRepository) {
+        this.leagueRepository = leagueRepository;
         this.gameRepository = gameRepository;
     }
 
@@ -42,18 +41,30 @@ public class ScrapeService {
 
         driver.get("https://www.laczynaspilka.pl/rozgrywki?season=2023%2F2024&leagueGroup=63e0b91e-f2cc-4149-813b-ea9a77919385&leagueId=20505afb-3cb6-4e59-9bb1-ed56e8201bb8&subLeague=733f5b9c-9ade-4011-84c4-b08d35d170b3&enumType=ZpnAndLeagueAndPlay&group=da03855e-6763-4671-b8ed-9b4aa7b10f0f&voivodeship=cd81a30b-c8a3-44e0-abd6-8b5772d3137c&isAdvanceMode=false&genderType=Male");
 
-        List<LeagueClubRow> leagueClubRows = getClubsFromRequest();
-        updateGroupClubsInDatabase(leagueClubRows);
+        League league = getClubsFromRequest();
+        upsertLeague(league);
 
         List<Game> games = getGamesFromRequest();
         saveGamesToDatabase(games);
     }
 
-    private void updateGroupClubsInDatabase(List<LeagueClubRow> leagueClubRows) {
-        leagueClubRowRepository.saveAll(leagueClubRows);
+    public void upsertLeague(League newLeague) {
+        Optional<League> existingLeagueOpt = leagueRepository.findByPlay_PlayId(newLeague.getPlay().getPlayId());
+
+        if (existingLeagueOpt.isPresent()) {
+            League existingLeague = existingLeagueOpt.get();
+            existingLeague.setLeague(newLeague.getLeague());
+            existingLeague.setPlay(newLeague.getPlay());
+            existingLeague.setRows(newLeague.getRows());
+            // Zaktualizuj inne pola, jeśli istnieją
+            leagueRepository.save(existingLeague);
+        } else {
+            leagueRepository.save(newLeague);
+        }
     }
 
     private void saveGamesToDatabase(List<Game> games) {
+        gameRepository.deleteAll();
         gameRepository.saveAll(games);
     }
 
@@ -64,7 +75,7 @@ public class ScrapeService {
         return waitForResponse("/tables");
     }
 
-    private List<LeagueClubRow> getClubsFromRequest() throws JsonProcessingException, InterruptedException {
+    private League getClubsFromRequest() throws JsonProcessingException, InterruptedException {
         JsonNode jsonNode = null;
 
         while(jsonNode == null) {
@@ -75,7 +86,7 @@ public class ScrapeService {
 
         System.out.println("Clubs set.");
 
-        return objectMapper.readValue(jsonNode.get("rows").toString(), new TypeReference<>() {});
+        return objectMapper.readValue(jsonNode.toString(), new TypeReference<>() {});
     }
 
     ///////////////////////////////////////////////////////
@@ -127,7 +138,4 @@ public class ScrapeService {
         return wowXhr.getMockDriver();
     }
 
-    public Page<LeagueClubRow> getAll(Pageable pageable) {
-        return leagueClubRowRepository.findAll(pageable);
-    }
 }

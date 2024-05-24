@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class ScraperRunner implements CommandLineRunner {
 
-    private final ScrapeService leagueService;
+    private final ScrapeService scrapeService;
 
     @Override
     public void run(String... args) throws Exception {
-        leagueService.run();
+        scrapeService.run();
     }
 }

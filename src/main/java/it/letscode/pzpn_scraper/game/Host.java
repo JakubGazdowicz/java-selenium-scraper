@@ -1,6 +1,7 @@
 package it.letscode.pzpn_scraper.game;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 @Getter
@@ -8,7 +9,8 @@ import lombok.Getter;
 public class Host {
     private String abbreviation;
 
-    private String id;
+    @JsonProperty(value = "id")
+    private String hostId;
 
     private String name;
 }
