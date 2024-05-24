@@ -1,0 +1,46 @@
+type Stats {
+    balanceGoalsCount: Int!
+    drawsCount: Int!
+    goalsCount: Int!
+    losesCount: Int!
+    lostGoalsCount: Int!
+    matchesCount: Int!
+    points: Int!
+    winsCount: Int!
+}
+
+type Team {
+    abbreviation: String
+    logo: String
+    name: String!
+    teamId: ID!
+}
+
+type Row {
+    index: Int!
+    positionStatus: String
+    promotionStatus: String
+    stats: Stats!
+    team: Team!
+}
+
+type LeagueDetails {
+    leagueId: ID!
+    name: String!
+}
+
+type PlayDetails {
+    playId: ID!
+    name: String!
+}
+
+type League {
+    id: ID!
+    league: LeagueDetails!
+    play: PlayDetails!
+    rows: [Row!]!
+}
+
+type Query {
+    league(id: ID!): League
+}
