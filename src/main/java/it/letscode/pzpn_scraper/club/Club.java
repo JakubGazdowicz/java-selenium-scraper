@@ -7,6 +7,8 @@ import org.springframework.data.annotation.Id;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 public class Club {
+    @Id
+    private String id;
 
     private Integer index;
 

@@ -1,6 +1,5 @@
 package it.letscode.pzpn_scraper.club;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -12,15 +11,19 @@ import io.github.sudharsan_selvaraj.wowxhr.log.XHRLog;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.stereotype.Service;
-
-import java.lang.reflect.Type;
 import java.util.List;
 
 @Service
 public class ClubService {
-    private WowXHR wowXhr;
+     private WowXHR wowXhr;
+
+     private final ClubRepository clubRepository;
 
     ObjectMapper objectMapper = new ObjectMapper();
+
+    public ClubService(ClubRepository clubRepository) {
+        this.clubRepository = clubRepository;
+    }
 
     public void run() throws DriverNotSupportedException, JsonProcessingException, InterruptedException {
         WebDriver driver = setupWebDriver();
@@ -29,6 +32,11 @@ public class ClubService {
 
         List<Club> clubs = getClubsFromRequest();
 
+        saveClubsToDatabase(clubs);
+    }
+
+    private void saveClubsToDatabase(List<Club> clubs) {
+        clubRepository.saveAll(clubs);
     }
 
     private JsonNode waitForClubResponse() throws JsonProcessingException {
@@ -39,11 +47,8 @@ public class ClubService {
 
             if(url != null && url.endsWith("/tables")) {
                 String responseBody = (String) log.getResponse().getBody();
-                System.out.println(responseBody);
-                System.out.println("--------------------------------");
 
                 return objectMapper.readTree(responseBody);
-
             }
         }
 
