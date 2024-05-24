@@ -18,15 +18,20 @@ import java.util.List;
 
 @Service
 public class ClubService {
-     private WowXHR wowXhr;
+    private WowXHR wowXhr;
+
+    ObjectMapper objectMapper = new ObjectMapper();
 
     public void run() throws DriverNotSupportedException, JsonProcessingException, InterruptedException {
         WebDriver driver = setupWebDriver();
 
         driver.get("https://www.laczynaspilka.pl/rozgrywki?season=2023%2F2024&leagueGroup=63e0b91e-f2cc-4149-813b-ea9a77919385&leagueId=20505afb-3cb6-4e59-9bb1-ed56e8201bb8&subLeague=733f5b9c-9ade-4011-84c4-b08d35d170b3&enumType=ZpnAndLeagueAndPlay&group=da03855e-6763-4671-b8ed-9b4aa7b10f0f&voivodeship=cd81a30b-c8a3-44e0-abd6-8b5772d3137c&isAdvanceMode=false&genderType=Male");
 
-        Thread.sleep(20000);
+        List<Club> clubs = getClubsFromRequest();
 
+    }
+
+    private JsonNode waitForClubResponse() throws JsonProcessingException {
         List<XHRLog> logs = wowXhr.log().getXHRLogs();
 
         for(XHRLog log: logs) {
@@ -37,23 +42,23 @@ public class ClubService {
                 System.out.println(responseBody);
                 System.out.println("--------------------------------");
 
-                ObjectMapper objectMapper = new ObjectMapper();
-                JsonNode jsonNode = objectMapper.readTree(responseBody);
-
-                JsonNode rows = jsonNode.get("rows");
-
-                List<Club> clubs = objectMapper.readValue(rows.toString(), new TypeReference<>() {});
-
-                for (Club club: clubs) {
-                    System.out.println(club);
-                    System.out.println(club.getStats().getPoints());
-                    System.out.println("--------------------------------");
-                }
-
-                break;
+                return objectMapper.readTree(responseBody);
 
             }
         }
+
+        return null;
+    }
+
+    private List<Club> getClubsFromRequest() throws JsonProcessingException, InterruptedException {
+        JsonNode jsonNode = null;
+
+        while(jsonNode == null) {
+            Thread.sleep(1000);
+            jsonNode = waitForClubResponse();
+        }
+
+        return objectMapper.readValue(jsonNode.get("rows").toString(), new TypeReference<>() {});
     }
 
     private WebDriver setupWebDriver() throws DriverNotSupportedException {
