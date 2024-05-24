@@ -12,6 +12,8 @@ public class ScraperRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        scrapeService.run();
+//        if("scape".equals(args[0])) {
+//            scrapeService.run();
+//        }
     }
 }

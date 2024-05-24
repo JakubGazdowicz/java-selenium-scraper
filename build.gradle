@@ -32,6 +32,7 @@ dependencies {
 	implementation 'org.seleniumhq.selenium:selenium-java:4.1.0'
 	implementation 'io.github.bonigarcia:webdrivermanager:5.8.0'
 	implementation group: 'io.github.sudharsan-selvaraj', name: 'wow-xhr', version: '1.0.0'
+	implementation 'org.springframework.boot:spring-boot-starter-graphql'
 }
 
 tasks.named('test') {
