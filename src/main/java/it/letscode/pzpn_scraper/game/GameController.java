@@ -1,4 +1,4 @@
-package it.letscode.pzpn_scraper.club;
+package it.letscode.pzpn_scraper.game;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/clubs")
-public class ClubController {
-    private final ClubService clubService;
+@RequestMapping("/games")
+public class GameController {
+    private final GameService gameService;
 
     @GetMapping
-    public Page<Club> getAll(Pageable pageable) {
-        return clubService.getAll(pageable);
+    public Page<Game> getAll(Pageable pageable) {
+        return gameService.getAll(pageable);
     }
 }

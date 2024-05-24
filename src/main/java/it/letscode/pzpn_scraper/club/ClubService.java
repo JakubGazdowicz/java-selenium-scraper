@@ -8,6 +8,8 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import io.github.sudharsan_selvaraj.wowxhr.WowXHR;
 import io.github.sudharsan_selvaraj.wowxhr.exceptions.DriverNotSupportedException;
 import io.github.sudharsan_selvaraj.wowxhr.log.XHRLog;
+import it.letscode.pzpn_scraper.game.Game;
+import it.letscode.pzpn_scraper.game.GameRepository;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.data.domain.Page;
@@ -20,11 +22,13 @@ public class ClubService {
      private WowXHR wowXhr;
 
      private final ClubRepository clubRepository;
+     private final GameRepository gameRepository;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
-    public ClubService(ClubRepository clubRepository) {
+    public ClubService(ClubRepository clubRepository, GameRepository gameRepository) {
         this.clubRepository = clubRepository;
+        this.gameRepository = gameRepository;
     }
 
     public void run() throws DriverNotSupportedException, JsonProcessingException, InterruptedException {
@@ -35,11 +39,16 @@ public class ClubService {
         List<Club> clubs = getClubsFromRequest();
         saveClubsToDatabase(clubs);
 
-        //
+        List<Game> games = getGamesFromRequest();
+        saveGamesToDatabase(games);
     }
 
     private void saveClubsToDatabase(List<Club> clubs) {
         clubRepository.saveAll(clubs);
+    }
+
+    private void saveGamesToDatabase(List<Game> games) {
+        gameRepository.saveAll(games);
     }
 
 
@@ -61,16 +70,17 @@ public class ClubService {
     }
 
     ///////////////////////////////////////////////////////
-    private JsonNode waitForMatchesResponse() throws JsonProcessingException {
+    private JsonNode waitForGamesResponse() throws JsonProcessingException {
         return waitForResponse("/matches");
     }
 
-    private List<Club> getMatchesFromRequest() throws JsonProcessingException, InterruptedException {
+    private List<Game> getGamesFromRequest() throws JsonProcessingException, InterruptedException {
         JsonNode jsonNode = null;
 
         while(jsonNode == null) {
             Thread.sleep(1000);
-            jsonNode = waitForClubResponse();
+            System.out.println("------ Waiting for games ------");
+            jsonNode = waitForGamesResponse();
         }
 
         return objectMapper.readValue(jsonNode.toString(), new TypeReference<>() {});
@@ -84,7 +94,7 @@ public class ClubService {
         for(XHRLog log: logs) {
             String url = log.getRequest().getUrl();
 
-            if(url != null && url.endsWith(routePhrase) {
+            if(url != null && url.endsWith(routePhrase)) {
                 String responseBody = (String) log.getResponse().getBody();
 
                 return objectMapper.readTree(responseBody);
