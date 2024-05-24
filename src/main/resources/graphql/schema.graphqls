@@ -1,3 +1,4 @@
+##### Model ligi ####
 type Stats {
     balanceGoalsCount: Int!
     drawsCount: Int!
@@ -41,6 +42,44 @@ type League {
     rows: [Row!]!
 }
 
+### Modul Games ###
+
+type Guest {
+    abbreviation: String
+    guestId: String
+    name: String
+    logo: String
+}
+
+type Host {
+    abbreviation: String
+    name: String!
+    hostId: ID!
+    logo: String
+}
+
+type Scores {
+    finalScore: String
+    fullTime: String
+    half: String
+}
+
+type Game {
+    id: ID!
+    canDateTimeChange: Boolean
+    dateTime: String!
+    guest: Guest!
+    host: Host!
+    matchId: ID!
+    queue: Int!
+    scores: Scores!
+    stadium: String
+    state: String
+    createdAt: String
+    updatedAt: String
+}
+
 type Query {
     league(id: ID!): League
+    games(clubId: ID!): [Game!]!
 }

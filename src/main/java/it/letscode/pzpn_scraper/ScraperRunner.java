@@ -13,7 +13,7 @@ public class ScraperRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 //        if("scape".equals(args[0])) {
-//            scrapeService.run();
+            scrapeService.run();
 //        }
     }
 }

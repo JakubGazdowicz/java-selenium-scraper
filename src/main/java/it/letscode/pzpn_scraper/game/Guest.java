@@ -10,7 +10,9 @@ public class Guest {
     private String abbreviation;
 
     @JsonProperty(value = "id")
-    private String questId;
+    private String guestId;
+
+    private String logo;
 
     private String name;
 }

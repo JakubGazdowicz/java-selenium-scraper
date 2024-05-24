@@ -12,5 +12,7 @@ public class Host {
     @JsonProperty(value = "id")
     private String hostId;
 
+    private String logo;
+
     private String name;
 }
