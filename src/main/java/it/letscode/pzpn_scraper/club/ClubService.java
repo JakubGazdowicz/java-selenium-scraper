@@ -15,11 +15,15 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ClubService {
      private WowXHR wowXhr;
+
+    private List<XHRLog> xhrLogs = new ArrayList<>();
 
      private final ClubRepository clubRepository;
      private final GameRepository gameRepository;
@@ -63,8 +67,11 @@ public class ClubService {
 
         while(jsonNode == null) {
             Thread.sleep(1000);
+            System.out.println("------ Waiting for clubs ------");
             jsonNode = waitForClubResponse();
         }
+
+        System.out.println("Clubs set.");
 
         return objectMapper.readValue(jsonNode.get("rows").toString(), new TypeReference<>() {});
     }
@@ -83,15 +90,20 @@ public class ClubService {
             jsonNode = waitForGamesResponse();
         }
 
+        System.out.println("Games set.");
+
         return objectMapper.readValue(jsonNode.toString(), new TypeReference<>() {});
     }
 
     ///////////////////////////////
 
     private JsonNode waitForResponse(String routePhrase) throws JsonProcessingException {
+
         List<XHRLog> logs = wowXhr.log().getXHRLogs();
 
-        for(XHRLog log: logs) {
+        xhrLogs.addAll(logs);
+
+        for(XHRLog log: xhrLogs) {
             String url = log.getRequest().getUrl();
 
             if(url != null && url.endsWith(routePhrase)) {
