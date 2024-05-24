@@ -1,4 +1,4 @@
-package it.letscode.pzpn_scraper.club;
+package it.letscode.pzpn_scraper.league;
 
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -6,12 +6,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
-public class ClubRunner implements CommandLineRunner {
+public class LeagueRunner implements CommandLineRunner {
 
-    private final ClubService clubService;
+    private final LeagueService leagueService;
 
     @Override
     public void run(String... args) throws Exception {
-        clubService.run();
+        leagueService.run();
     }
 }

@@ -1,4 +1,4 @@
-package it.letscode.pzpn_scraper.club;
+package it.letscode.pzpn_scraper.league;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;

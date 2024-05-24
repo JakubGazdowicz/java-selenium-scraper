@@ -1,5 +1,6 @@
-package it.letscode.pzpn_scraper.club;
+package it.letscode.pzpn_scraper.league;
 
+import it.letscode.pzpn_scraper.league.league_club_row.LeagueClubRow;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/clubs")
-public class ClubController {
-    private final ClubService clubService;
+public class LeagueController {
+    private final LeagueService leagueService;
 
     @GetMapping
-    public Page<Club> getAll(Pageable pageable) {
-        return clubService.getAll(pageable);
+    public Page<LeagueClubRow> getAll(Pageable pageable) {
+        return leagueService.getAll(pageable);
     }
 }
